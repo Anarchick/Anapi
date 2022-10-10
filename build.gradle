@@ -55,6 +55,10 @@ task export() {
             from jar // here it automatically reads jar file produced from jar task
             into "C:/Users/aeim/Documents/minecraft/law/server/havenblock/plugins"
         }
+        copy {
+            from jar // here it automatically reads jar file produced from jar task
+            into "C:/Users/aeim/Documents/minecraft/law/programming/HavenBlock/libs"
+        }
     }
 }
 
