@@ -1,6 +1,6 @@
 package fr.anarchick.anapi.bukkit;
 
-import fr.anarchick.anapi.Main;
+import fr.anarchick.anapi.MainBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -8,7 +8,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 public class Scheduling {
 
     private static final BukkitScheduler scheduler = Bukkit.getScheduler();
-    private static final Plugin plugin = Main.getInstance();
+    private static final Plugin plugin = MainBukkit.getInstance();
 
     public static void sync(Runnable runnable) {
         scheduler.runTask(plugin, runnable);

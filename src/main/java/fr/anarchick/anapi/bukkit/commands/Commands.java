@@ -1,6 +1,6 @@
 package fr.anarchick.anapi.bukkit.commands;
 
-import fr.anarchick.anapi.Main;
+import fr.anarchick.anapi.MainBukkit;
 import fr.anarchick.anapi.bukkit.BukkitUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -23,7 +23,7 @@ public abstract class Commands implements CommandExecutor, Listener {
 	protected String label;
 
 	public Commands() {
-		Main.registerEvents(this);
+		MainBukkit.registerEvents(this);
 	}
 
 	@Override

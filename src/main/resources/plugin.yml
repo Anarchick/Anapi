@@ -1,6 +1,6 @@
 name: Anapi
 version: '${version}'
-main: fr.anarchick.anapi.Main
+main: fr.anarchick.anapi.MainBukkit
 api-version: 1.18
 authors: [ Anarchick ]
 description: Anarchick API

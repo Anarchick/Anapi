@@ -7,6 +7,7 @@ version = '1.0'
 
 repositories {
     mavenCentral()
+    mavenLocal()
     maven {
         name = 'papermc-repo'
         url = 'https://repo.papermc.io/repository/maven-public/'
@@ -15,10 +16,13 @@ repositories {
         name = 'sonatype'
         url = 'https://oss.sonatype.org/content/groups/public/'
     }
+
+    maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // This lets gradle find the BungeeCord files online
 }
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
+    compileOnly 'net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT'
     compileOnly 'commons-io:commons-io:2.11.0'
 }
 
@@ -43,6 +47,9 @@ processResources {
     inputs.properties props
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
+        expand props
+    }
+    filesMatching('bungee.yml') {
         expand props
     }
 }

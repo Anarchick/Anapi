@@ -9,9 +9,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 
-public final class Main extends JavaPlugin {
+public final class MainBukkit extends JavaPlugin {
 
-    private static Main INSTANCE;
+    private static MainBukkit INSTANCE;
     public static final PluginManager PLUGIN_MANAGER = Bukkit.getServer().getPluginManager();
 
     @Override
@@ -25,7 +25,7 @@ public final class Main extends JavaPlugin {
         // Plugin shutdown logic
     }
 
-    public static Main getInstance() {
+    public static MainBukkit getInstance() {
         return INSTANCE;
     }
 

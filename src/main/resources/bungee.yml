@@ -1,0 +1,5 @@
+name: Anapi
+main: fr.anarchick.anapi.MainProxy
+version: '${version}'
+author: Anarchick
+description: Anarchick API

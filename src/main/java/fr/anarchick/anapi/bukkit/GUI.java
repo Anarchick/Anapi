@@ -1,6 +1,6 @@
 package fr.anarchick.anapi.bukkit;
 
-import fr.anarchick.anapi.Main;
+import fr.anarchick.anapi.MainBukkit;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.HumanEntity;
@@ -31,7 +31,7 @@ public abstract class GUI implements Listener {
 
     public void open(HumanEntity... players) {
         if (inv.getViewers().size() == 0) {
-            Main.registerEvents(this);
+            MainBukkit.registerEvents(this);
         }
         for (HumanEntity player : players) {
             player.openInventory(inv);
@@ -92,7 +92,7 @@ public abstract class GUI implements Listener {
         if (equals(event.getInventory())) {
             Scheduling.syncDelay(1, () -> {
                 if (inv.getViewers().size() == 0) {
-                    Main.unregisterEvents(this);
+                    MainBukkit.unregisterEvents(this);
                 }
             });
         }
