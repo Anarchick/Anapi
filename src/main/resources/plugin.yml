@@ -1,0 +1,6 @@
+name: Anapi
+version: '${version}'
+main: fr.anarchick.anapi.Main
+api-version: 1.18
+authors: [ Anarchick ]
+description: Anarchick API
