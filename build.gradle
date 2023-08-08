@@ -1,8 +1,9 @@
 plugins {
     id 'java'
+    id 'maven-publish'
 }
 
-group = 'Anapi'
+group = 'fr.anarchick.anapi'
 version = '1.0'
 
 repositories {
@@ -85,6 +86,14 @@ task export() {
         copy {
             from jar // here it automatically reads jar file produced from jar task
             into "C:/Users/aeim/Documents/minecraft/btooom/programing/btooom/libs"
+        }
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
         }
     }
 }
