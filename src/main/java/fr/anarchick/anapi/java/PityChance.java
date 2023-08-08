@@ -63,7 +63,7 @@ public class PityChance {
 
     /**
      * Return true if already has success,
-     * otherwise return the result of random chance of [0;bound] <= value
+     * otherwise return the result of random chance of [0;bound] less or equal value
      * @param value
      * @return
      */

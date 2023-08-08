@@ -21,7 +21,7 @@ import java.util.*;
 
 /**
  * @version 0.1.4.1 (not fully tested)
- * @authors WarzouMc, Anarchick
+ * @author WarzouMc, Anarchick
  */
 public class ItemBuilder {
 

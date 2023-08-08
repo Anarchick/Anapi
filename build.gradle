@@ -39,6 +39,8 @@ java {
     if (JavaVersion.current() < javaVersion) {
         toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
     }
+    withSourcesJar()
+    withJavadocJar()
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -96,6 +98,11 @@ publishing {
             from components.java
         }
     }
+}
+
+wrapper {
+    gradleVersion = "7.3.3"
+    distributionType = Wrapper.DistributionType.ALL
 }
 
 build.finalizedBy export

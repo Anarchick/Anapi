@@ -158,7 +158,7 @@ public class ColorX {
 
     /**
      * La chaîne de caractères HEX au format "#RRGGBB"
-     * @return
+     * @return hexadecimal representation
      */
     @Override
     public String toString() {
@@ -167,7 +167,7 @@ public class ColorX {
 
     /**
      * La chaîne de caractères HEX au format "RRGGBB"
-     * @return
+     * @return hexadecimal representation
      */
     public String toHexString() {
         return String.format("%02x%02x%02x", r, g, b);

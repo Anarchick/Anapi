@@ -99,7 +99,7 @@ public class PersistentCooldown {
 
         /**
          * Remaining duration in ticks
-         * @return > 0 duration left, <= 0 duration since
+         * @return if more than 0 it's duration left, or if less or equal to 0 it's duration since
          */
         public Long getRemainingTime() {
             return (end - Instant.now().toEpochMilli()) / 50;
