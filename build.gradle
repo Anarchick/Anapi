@@ -18,12 +18,16 @@ repositories {
     }
 
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // This lets gradle find the BungeeCord files online
+    maven { url = "https://repo.onarandombox.com/content/groups/public/" }
+    maven { url 'https://libraries.minecraft.net' }
 }
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'net.md-5:bungeecord-api:1.16-R0.5-SNAPSHOT'
     compileOnly 'commons-io:commons-io:2.11.0'
+    compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
+    compileOnly 'com.mojang:authlib:3.3.39'
 }
 
 def targetJavaVersion = 17
@@ -64,7 +68,23 @@ task export() {
         }
         copy {
             from jar // here it automatically reads jar file produced from jar task
+            into "C:/Users/aeim/Documents/minecraft/law/server/survie/plugins"
+        }
+        copy {
+            from jar // here it automatically reads jar file produced from jar task
             into "C:/Users/aeim/Documents/minecraft/law/programming/HavenBlock/libs"
+        }
+        copy {
+            from jar // here it automatically reads jar file produced from jar task
+            into "C:/Users/aeim/Documents/minecraft/law/programming/LawEmeraldBank/libs"
+        }
+        copy {
+            from jar // here it automatically reads jar file produced from jar task
+            into "C:/Users/aeim/Documents/minecraft/btooom/server/plugins"
+        }
+        copy {
+            from jar // here it automatically reads jar file produced from jar task
+            into "C:/Users/aeim/Documents/minecraft/btooom/programing/btooom/libs"
         }
     }
 }

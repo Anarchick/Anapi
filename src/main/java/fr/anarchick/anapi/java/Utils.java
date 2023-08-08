@@ -5,14 +5,16 @@ import com.google.common.collect.Lists;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.DoubleStream;
 
 public class Utils {
+
+	private static final Random RANDOM = new Random();
 	
 	public static Long now() {
 		return Instant.now().getEpochSecond();
@@ -31,19 +33,34 @@ public class Utils {
 	}
 	
 	public static <T> T getRandom(T[] array) {
-        int rnd = new Random().nextInt(array.length);
+        int rnd = RANDOM.nextInt(array.length);
         return array[rnd];
     }
 
 	@Nullable
 	public static <T> T getRandom(List<T> list) {
-		int index = new Random().nextInt(list.size());
-		return (list.isEmpty()) ? null : list.get(index);
+		if (list.isEmpty()) return null;
+		int index = RANDOM.nextInt(list.size());
+		return list.get(index);
 	}
-	
+
+	/**
+	 * Use a static Random instead of using new Random().nextDouble(min, max)
+	 * @param min
+	 * @param max
+	 * @return
+	 */
     public static Double getRandomDouble(double min, double max) {
-        return ThreadLocalRandom.current().nextDouble(Math.min(min, max), Math.max(min, max) + 1);
+        return RANDOM.nextDouble(Math.min(min, max), Math.max(min, max) + 1);
     }
+
+	public static int getProbability(List<Double> probs) {
+		double[] probabilities = new double[probs.size()];
+		for (int i = 0; i < probs.size(); i++) {
+			probabilities[i] = probs.get(i).doubleValue();
+		}
+		return getProbability(probabilities);
+	}
 
 	/**
 	 * The sum of probabilities can exceed 100% without error
@@ -67,7 +84,7 @@ public class Utils {
      * @param chance [0;100]
      */
     public static boolean chance(double chance) {
-        return (ThreadLocalRandom.current().nextDouble(0, 100) <= chance);
+        return (RANDOM.nextDouble(0, 100) <= chance);
     }
 
 	public static <E> List<E> newArrayList(boolean shuffle, E... elements) {
@@ -123,6 +140,24 @@ public class Utils {
 			return false;
 		}
 		return UUID_REGEX_PATTERN.matcher(str).matches();
+	}
+
+	/** Linear interpolation from range [a;b] to [c;d]
+	 *
+	 * @since 1.0
+	 *
+	 * @param x between [a;b]
+	 * @param a
+	 * @param b
+	 * @param c
+	 * @param d
+	 * @return Double between [c;d]
+	 */
+	public static Double linear(double x, double a, double b, double c, double d) {
+		if (a >= b) return 0D;
+		if (x <= a) return c;
+		if (x >= b) return d;
+		return c + (x - a) * (d - c) / (b - a);
 	}
 
 }

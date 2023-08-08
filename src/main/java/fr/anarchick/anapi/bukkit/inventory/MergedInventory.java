@@ -1,10 +1,12 @@
-package fr.anarchick.anapi.bukkit;
+package fr.anarchick.anapi.bukkit.inventory;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
+import javax.annotation.Nonnull;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -72,6 +74,18 @@ public class MergedInventory {
             }
         }
         modifications.clear();
+    }
+
+    @Nonnull
+    public static List<Integer> slotsBox(final int first, final int second) {
+        final int minMod = Math.min(first % 9, second % 9);
+        final int maxMod = Math.max(first % 9, second % 9);
+        final List<Integer> slots = new LinkedList<>();
+        for (int i = Math.min(first, second); i <= Math.max(first, second); i++) {
+            int mod = i % 9;
+            if (mod >= minMod && mod <= maxMod) slots.add(i);
+        }
+        return slots;
     }
 
 }

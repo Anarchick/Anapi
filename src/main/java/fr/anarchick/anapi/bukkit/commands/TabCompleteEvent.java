@@ -74,7 +74,7 @@ public class TabCompleteEvent implements Listener {
         }
 
         @Nonnull
-        protected String getArgument(int i) {
+        public String getArgument(int i) {
             return (arguments.size() > i) ? arguments.get(i) : "";
         }
 

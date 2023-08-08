@@ -1,16 +1,22 @@
 package fr.anarchick.anapi.bukkit;
 
 import fr.anarchick.anapi.java.Utils;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.*;
 import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -179,10 +185,63 @@ public class BukkitUtils {
 		player.sendMessage(colored(message));
 	}
 
+	/**
+	 * Use MiniMessage API
+	 * @param sender
+	 * @param miniMessage
+	 */
+	public static void sendMessage(CommandSender sender, String miniMessage) {
+		Audience.audience(sender).sendMessage(PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage));
+	}
 
-	public static void sendColorActionBar(Player player, String message) {
-		TextComponent tc = new TextComponent(colored(message));
-		player.spigot().sendMessage(ChatMessageType.ACTION_BAR, tc);
+	/**
+	 * Use MiniMessage API
+	 * @param sender
+	 * @param miniMessage
+	 */
+	public static void sendMessage(CommandSender sender, Component miniMessage) {
+		Audience.audience(sender).sendMessage(miniMessage);
+	}
+
+	/**
+	 * Does not send a message to console
+	 * @param players
+	 * @param miniMessage
+	 */
+	public static void broadcastMessage(@Nonnull List<Player> players, @Nonnull String miniMessage) {
+		Component component = PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage);
+		players.forEach(player -> player.sendMessage(component));
+	}
+
+	public static void sendActionBar(Player player, String miniMessage) {
+		player.sendActionBar(PaperComponentUtils.getMiniMessageTextComponent(miniMessage));
+	}
+
+	public static void sendTitle(@Nonnull Player player, @Nonnull String title, @Nonnull String subtitle, int fadeIn, int stay, int fadeOut) {
+		sendTitle(List.of(player), title, subtitle, fadeIn, stay, fadeOut);
+	}
+	public static void sendTitle(@Nonnull List<Player> players, @Nonnull String title, @Nonnull String subtitle, int fadeIn, int stay, int fadeOut) {
+		if (players.isEmpty()) return;
+		Component componentTitle = PaperComponentUtils.getMiniMessageTextComponent(title);
+		Component componentSubtitle = PaperComponentUtils.getMiniMessageTextComponent(subtitle);
+		Duration in = Duration.ofMillis(fadeIn * 50L);
+		Duration st = Duration.ofMillis(stay *50L);
+		Duration out = Duration.ofMillis(fadeOut *50L);
+		Audience.audience(players).showTitle(Title.title(componentTitle, componentSubtitle, Title.Times.times(in, st, out)));
+	}
+
+	public static void kick(Player player, String miniMessage) {
+		player.kick(PaperComponentUtils.getMiniMessageTextComponent(miniMessage));
+	}
+
+	public static List<Location> sortedNearestLocations(Location origin, List<Location> locs) {
+		LinkedList<Location> sorted = new LinkedList<>(locs);
+		sorted.sort((o1, o2) -> {
+			Double d1 = origin.distance(o1);
+			Double d2 = origin.distance(o2);
+			return d1.compareTo(d2);
+		});
+		return sorted;
 	}
 
 }

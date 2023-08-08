@@ -1,5 +1,6 @@
 package fr.anarchick.anapi.bukkit;
 
+import fr.anarchick.anapi.java.Pair;
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -45,6 +46,13 @@ public class ChunkUtils {
             }
         }
         return blocks;
+    }
+
+    @Nonnull
+    public Pair<Integer, Integer> getDistance(@Nonnull Chunk chunk) {
+        int x = Math.abs(X - chunk.getX());
+        int z = Math.abs(Z - chunk.getZ());
+        return new Pair<Integer, Integer>(x, z);
     }
 
 }

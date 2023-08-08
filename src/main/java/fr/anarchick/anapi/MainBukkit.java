@@ -1,6 +1,7 @@
 package fr.anarchick.anapi;
 
 import fr.anarchick.anapi.bukkit.commands.TabCompleteEvent;
+import fr.anarchick.anapi.bukkit.inventory.GUIListener;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -16,8 +17,9 @@ public final class MainBukkit extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        this.INSTANCE = this;
+        INSTANCE = this;
         registerEvents(new TabCompleteEvent());
+        registerEvents(new GUIListener());
     }
 
     @Override

@@ -1,6 +1,7 @@
-package fr.anarchick.anapi.bukkit;
+package fr.anarchick.anapi.bukkit.inventory;
 
-import net.md_5.bungee.api.ChatColor;
+import fr.anarchick.anapi.bukkit.PaperComponentUtils;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Material;
@@ -12,9 +13,11 @@ import org.bukkit.inventory.meta.*;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+
+import java.lang.reflect.Field;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * @version 0.1.4.1 (not fully tested)
@@ -137,12 +140,12 @@ public class ItemBuilder {
 
     /**
      * set the display name of the item
-     * @param name
+     * @param miniMessage
      * @return
      */
     @SuppressWarnings("deprecation")
-	public ItemBuilder setName(String name){
-        itemMeta.setDisplayName(colored(name));
+	public ItemBuilder setName(String miniMessage){
+        itemMeta.displayName(toMiniMessage(miniMessage));
         return this;
     }
 
@@ -154,7 +157,8 @@ public class ItemBuilder {
     
 	@SuppressWarnings("deprecation")
 	public ItemBuilder addLore(List<String> lores){
-        itemMeta.setLore(colored(lores));
+        List<Component> loresComponent = lores.stream().map(lore -> PaperComponentUtils.getMiniMessageTextComponent(lore)).toList();
+        itemMeta.lore(loresComponent);
         return this;
     }
 
@@ -349,6 +353,29 @@ public class ItemBuilder {
             skullMeta.setOwningPlayer(player);
             itemMeta = skullMeta;
     	}
+        return this;
+    }
+
+    /**
+     * If your item is a player skull you can apply a texture
+     * value is the base64 value of the skull texture
+     * You can find the value on https://minecraft-heads.com
+     * @param texture Base64 texture value
+     * @return
+     */
+    public ItemBuilder setSkullTexture(String texture){
+        if (!(itemMeta instanceof SkullMeta)) return this;
+        SkullMeta skullMeta = (SkullMeta) itemMeta;
+        GameProfile gameProfile = new GameProfile(UUID.randomUUID(), null);
+        gameProfile.getProperties().put("textures", new Property("textures", texture));
+        try{
+            Field gameProfileField = skullMeta.getClass().getDeclaredField("profile");
+            gameProfileField.setAccessible(true);
+            gameProfileField.set(skullMeta, gameProfile);
+            itemMeta = skullMeta;
+        } catch (IllegalAccessException | NoSuchFieldException error) {
+            error.printStackTrace();
+        }
         return this;
     }
 
@@ -655,23 +682,8 @@ public class ItemBuilder {
         return itemStack.hasItemMeta() && itemMeta.isUnbreakable();
     }
 
-    final private static Pattern HEX_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}");
-    public static String colored(String txt) {
-    	final String EMPTY = "";
-    	Matcher match = HEX_PATTERN.matcher(txt);
-    	while (match.find()) {
-    		String color = txt.substring(match.start(), match.end());
-    		txt = txt.replace(color, ChatColor.of(color)+EMPTY);
-    		match = HEX_PATTERN.matcher(txt);
-    	}
-		return ChatColor.translateAlternateColorCodes('&', txt);
-	}
-
-    private List<String> colored(List<String> txt) {
-		for (int i = 0; i < txt.size(); i++) {
-			txt.set(i, colored(txt.get(i)));
-		}
-		return txt;
-	}
+    protected Component toMiniMessage(String miniMessage) {
+        return PaperComponentUtils.getMiniMessageTextComponent(miniMessage);
+    }
 
 }
