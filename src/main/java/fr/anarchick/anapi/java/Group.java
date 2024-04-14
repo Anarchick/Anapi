@@ -3,6 +3,7 @@ package fr.anarchick.anapi.java;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class Group<T> {
 
     private List<T> members = new ArrayList<>();

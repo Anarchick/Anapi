@@ -4,18 +4,27 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.event.*;
+import org.jetbrains.annotations.ApiStatus;
 
 import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+/**
+ * This class should not be extended. Implement {@link Completable} instead.
+ */
+@ApiStatus.Internal
+@SuppressWarnings("unused")
 public class TabCompleteEvent implements Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.NORMAL)
     public void onTabComplete(final org.bukkit.event.server.TabCompleteEvent event) {
         final String buffer = event.getBuffer();
-        final String command = buffer.split(" ")[0].substring(1);
+        if (!buffer.contains(" ")) {
+            return;
+        }
+        final String command = buffer.split(" ")[0];
         PluginCommand pc = Bukkit.getPluginCommand(command);
         if (pc != null && pc.getExecutor() instanceof Commands executor) {
             new PluginTabCompleteEvent(executor, event, command, buffer).callEvent();
@@ -44,7 +53,6 @@ public class TabCompleteEvent implements Listener {
 
             final char c = buffer.charAt(buffer.length() - 1);
             this.lastArgument = (c == ' ') ? "" : arguments.get(arguments.size() -1);
-
         }
 
         @Override

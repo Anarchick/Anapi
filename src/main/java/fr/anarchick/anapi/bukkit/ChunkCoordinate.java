@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class ChunkCoordinate implements Serializable {
 
     private final int x, z;

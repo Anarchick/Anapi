@@ -18,6 +18,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+@SuppressWarnings("unused")
 public class InventoryUtils {
 
     public static Inventory createInventory(InventoryHolder owner, int size, String name) {
@@ -136,7 +137,6 @@ public class InventoryUtils {
             return new HashSet<>(slots);
         }
 
-        @NotNull
         public void setSlots(@Nonnull final Set<Integer> slots) {
             this.slots = slots;
         }

@@ -10,6 +10,7 @@ import javax.annotation.Nonnull;
 import static org.bukkit.block.BlockFace.EAST;
 import static org.bukkit.block.BlockFace.SOUTH;
 
+@SuppressWarnings("unused")
 public class ChunkUtils {
 
     private final int X, Z;

@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class PersistentCooldown {
 
     private static final JsonSerializationManager<PersistentCooldown> serializationManager = new JsonSerializationManager<>();

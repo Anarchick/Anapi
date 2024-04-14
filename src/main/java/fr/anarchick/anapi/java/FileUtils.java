@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class FileUtils {
 
     final private static File[] EMPTY_FILES = new File[0];

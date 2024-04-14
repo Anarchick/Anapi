@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class TimeUtils {
 
     public final long xDays, xHours, xMinutes, xSeconds, xTicks;

@@ -31,6 +31,7 @@ import java.util.logging.Logger;
  * 
  * @author Peter Güttinger
  */
+@SuppressWarnings("unused")
 public class EnumerationIterable<T> implements Iterable<T> {
 	
 	@Nullable

@@ -4,19 +4,22 @@ import fr.anarchick.anapi.java.ColorX;
 import fr.anarchick.anapi.java.FileUtils;
 import fr.anarchick.anapi.java.Pair;
 import org.bukkit.map.MinecraftFont;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.net.URL;
 import java.util.*;
-import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class Characters {
+
+	public static final Map<String, Characters> MAPPINGS = new HashMap<>();
 
 	protected static final Characters PIXEL_8 = new Characters("A010", "A017");
 	protected static final Characters PIXEL_64 = new Characters("A000", "A007");
@@ -32,6 +35,13 @@ public class Characters {
 		for (int i = start; i <= end; i++) {
 			this.chars.add(compute(i));
 		}
+	}
+
+	public Characters registerPlaceholder(String... ids) {
+		for (String id : ids) {
+			MAPPINGS.put(id.toLowerCase(), this);
+		}
+		return this;
 	}
 	
 	public String getFirst() {

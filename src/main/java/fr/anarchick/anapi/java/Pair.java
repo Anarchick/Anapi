@@ -1,5 +1,6 @@
 package fr.anarchick.anapi.java;
 
+@SuppressWarnings("unused")
 public record Pair<K, V>(K first, V second) {
 
     @Override

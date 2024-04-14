@@ -21,6 +21,7 @@ repositories {
     maven { url 'https://oss.sonatype.org/content/repositories/snapshots' } // This lets gradle find the BungeeCord files online
     maven { url = "https://repo.onarandombox.com/content/groups/public/" }
     maven { url 'https://libraries.minecraft.net' }
+    maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
 }
 
 dependencies {
@@ -29,6 +30,7 @@ dependencies {
     compileOnly 'commons-io:commons-io:2.11.0'
     compileOnly 'com.onarandombox.multiversecore:Multiverse-Core:4.3.1'
     compileOnly 'com.mojang:authlib:3.3.39'
+    compileOnly 'me.clip:placeholderapi:2.11.5'
 }
 
 def targetJavaVersion = 17
@@ -61,33 +63,32 @@ processResources {
     }
 }
 
+
+
 task export() {
-    group = "EXPORT"
+    group = "other"
     description = "build gradle into external folder"
+    def fromFile = 'build/libs/'+archivesBaseName+'-'+version+'.jar'
+    def destinations = [
+            'C:/Users/aeim/Documents/minecraft/law/server/HavenbBlock/plugins',
+            'C:/Users/aeim/Documents/minecraft/law/server/FloatingRealms/plugins',
+            'C:/Users/aeim/Documents/minecraft/law/programming/HavenBlock/libs',
+            'C:/Users/aeim/Documents/minecraft/law/programming/FloatingRealms/libs',
+            'C:/Users/aeim/Documents/minecraft/btooom/server/plugins',
+            'C:/Users/aeim/Documents/minecraft/law/programming/ValheimFood/libs',
+            'C:/Users/aeim/Documents/minecraft/btooom/programing/btooom/libs'
+    ]
     doLast {
-        copy {
-            from jar // here it automatically reads jar file produced from jar task
-            into "C:/Users/aeim/Documents/minecraft/law/server/havenblock/plugins"
-        }
-        copy {
-            from jar // here it automatically reads jar file produced from jar task
-            into "C:/Users/aeim/Documents/minecraft/law/server/survie/plugins"
-        }
-        copy {
-            from jar // here it automatically reads jar file produced from jar task
-            into "C:/Users/aeim/Documents/minecraft/law/programming/HavenBlock/libs"
-        }
-        copy {
-            from jar // here it automatically reads jar file produced from jar task
-            into "C:/Users/aeim/Documents/minecraft/law/programming/LawEmeraldBank/libs"
-        }
-        copy {
-            from jar // here it automatically reads jar file produced from jar task
-            into "C:/Users/aeim/Documents/minecraft/btooom/server/plugins"
-        }
-        copy {
-            from jar // here it automatically reads jar file produced from jar task
-            into "C:/Users/aeim/Documents/minecraft/btooom/programing/btooom/libs"
+        destinations.each {dest ->
+            def destDir = file(dest)
+            if (destDir.exists()) {
+                copy {
+                    from fromFile
+                    into destDir
+                }
+            } else {
+                println "The folder '" + destDir + "' does not exist"
+            }
         }
     }
 }

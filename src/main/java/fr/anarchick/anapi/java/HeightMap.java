@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+@SuppressWarnings("unused")
 public class HeightMap {
 
 	private final int height;

@@ -6,6 +6,7 @@ import com.google.gson.GsonBuilder;
 
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class JsonSerializationManager<T> {
 
     private final Gson gson;

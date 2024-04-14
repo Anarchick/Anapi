@@ -1,6 +1,7 @@
 package fr.anarchick.anapi.java;
 
 import com.google.common.collect.Lists;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 import java.awt.*;
@@ -9,9 +10,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.DoubleStream;
 
+@SuppressWarnings("unused")
 public class Utils {
 
 	private static final Random RANDOM = new Random();
@@ -158,6 +161,26 @@ public class Utils {
 		if (x <= a) return c;
 		if (x >= b) return d;
 		return c + (x - a) * (d - c) / (b - a);
+	}
+
+	private static final Pattern PATTERN_UNICODE = Pattern.compile("\\\\u([0-9A-Fa-f]{4})");
+
+	/**
+	 * Replace all unicode \uABCD with it's corresponding character.
+	 * @param input text to evaluate
+	 * @return the transformed text
+	 */
+	public static String replaceUnicode(@NotNull String input) {
+		final Matcher matcher = PATTERN_UNICODE.matcher(input);
+		final StringBuffer result = new StringBuffer();
+
+		while (matcher.find()) {
+			int code = Integer.parseInt(matcher.group(1), 16);
+			matcher.appendReplacement(result, Character.toString((char) code));
+		}
+
+		matcher.appendTail(result);
+		return result.toString();
 	}
 
 }

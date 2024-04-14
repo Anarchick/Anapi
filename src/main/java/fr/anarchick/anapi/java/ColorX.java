@@ -2,6 +2,7 @@ package fr.anarchick.anapi.java;
 
 import java.awt.*;
 
+@SuppressWarnings("unused")
 public class ColorX {
 
     private static final String HEX_PATTERN = "^#([A-Fa-f0-9]{6})$";
@@ -87,8 +88,8 @@ public class ColorX {
 
     /**
      * La chaîne de caractères HEX doit être au format "#RRGGBB"
-     * @param hex
-     * @return
+     * @param hex the hex string
+     * @return the returned ColorX
      */
     public static ColorX fromHex(String hex) {
         if (!hex.matches(HEX_PATTERN)) {

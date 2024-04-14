@@ -17,6 +17,7 @@ package fr.anarchick.anapi.java;
  *
  */
 
+@SuppressWarnings("unused")
 public class SimplexNoise {
     private static final Grad[] grad3 = {new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
             new Grad(1, 0, 1), new Grad(-1, 0, 1), new Grad(1, 0, -1), new Grad(-1, 0, -1),

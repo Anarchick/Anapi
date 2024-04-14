@@ -3,7 +3,6 @@ package fr.anarchick.anapi.bukkit;
 import fr.anarchick.anapi.java.Utils;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
@@ -16,11 +15,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("unused")
 public class BukkitUtils {
 	
 	public static final double PI = Math.PI;
@@ -187,8 +188,8 @@ public class BukkitUtils {
 
 	/**
 	 * Use MiniMessage API
-	 * @param sender
-	 * @param miniMessage
+	 * @param sender the receiver
+	 * @param miniMessage the mini message as string
 	 */
 	public static void sendMessage(CommandSender sender, String miniMessage) {
 		Audience.audience(sender).sendMessage(PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage));
@@ -196,8 +197,8 @@ public class BukkitUtils {
 
 	/**
 	 * Use MiniMessage API
-	 * @param sender
-	 * @param miniMessage
+	 * @param sender the receiver
+	 * @param miniMessage the mini message as Component
 	 */
 	public static void sendMessage(CommandSender sender, Component miniMessage) {
 		Audience.audience(sender).sendMessage(miniMessage);
@@ -205,13 +206,23 @@ public class BukkitUtils {
 
 	/**
 	 * Does not send a message to console
-	 * @param players
-	 * @param miniMessage
+	 * @param miniMessage the mini message as string
 	 */
-	public static void broadcastMessage(@Nonnull List<Player> players, @Nonnull String miniMessage) {
+	public static void broadcastMessage(@Nonnull String miniMessage) {
+		broadcastMessage(Bukkit.getOnlinePlayers(), miniMessage);
+	}
+
+	/**
+	 * Does not send a message to console
+	 * @param players receivers
+	 * @param miniMessage the mini message as string
+	 */
+	public static void broadcastMessage(@Nonnull Collection<? extends Player> players, @Nonnull String miniMessage) {
 		Component component = PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage);
 		players.forEach(player -> player.sendMessage(component));
 	}
+
+
 
 	public static void sendActionBar(Player player, String miniMessage) {
 		player.sendActionBar(PaperComponentUtils.getMiniMessageTextComponent(miniMessage));

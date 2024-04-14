@@ -3,6 +3,7 @@ package fr.anarchick.anapi.bukkit;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("unused")
 public class Animation extends Scheduling {
 	
 	private final Map<Integer, Runnable> anim = new HashMap<>();

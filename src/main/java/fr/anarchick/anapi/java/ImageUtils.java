@@ -13,6 +13,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Base64;
 
+@SuppressWarnings("unused")
 public class ImageUtils {
 
     public static byte[] imageToByteArray(BufferedImage image) throws IOException {

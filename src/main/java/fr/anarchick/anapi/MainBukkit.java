@@ -2,6 +2,8 @@ package fr.anarchick.anapi;
 
 import fr.anarchick.anapi.bukkit.commands.TabCompleteEvent;
 import fr.anarchick.anapi.bukkit.inventory.GUIListener;
+import fr.anarchick.anapi.bukkit.softdepend.CharactersPlaceHolder;
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
@@ -10,6 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import javax.annotation.Nonnull;
 
+@SuppressWarnings("unused")
 public final class MainBukkit extends JavaPlugin {
 
     private static MainBukkit INSTANCE;
@@ -20,6 +23,10 @@ public final class MainBukkit extends JavaPlugin {
         INSTANCE = this;
         registerEvents(new TabCompleteEvent());
         registerEvents(new GUIListener());
+
+        if (PLUGIN_MANAGER.isPluginEnabled("PlaceholderAPI")) {
+            new CharactersPlaceHolder().register();
+        }
     }
 
     @Override

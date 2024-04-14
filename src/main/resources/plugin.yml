@@ -3,5 +3,5 @@ version: '${version}'
 main: fr.anarchick.anapi.MainBukkit
 api-version: 1.18
 authors: [ Anarchick ]
-softdepend: [Multiverse-Core]
+softdepend: [Multiverse-Core, PlaceholderAPI]
 description: Anarchick API

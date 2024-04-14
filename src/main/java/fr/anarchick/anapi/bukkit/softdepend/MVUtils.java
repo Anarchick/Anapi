@@ -10,6 +10,7 @@ import org.bukkit.World;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+@SuppressWarnings("unused")
 public class MVUtils {
 
     public static final MultiverseCore CORE = (MultiverseCore) Bukkit.getServer().getPluginManager().getPlugin("Multiverse-Core");

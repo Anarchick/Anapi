@@ -5,6 +5,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
+@SuppressWarnings("unused")
 public class Scheduling {
 
     private static final BukkitScheduler scheduler = Bukkit.getScheduler();

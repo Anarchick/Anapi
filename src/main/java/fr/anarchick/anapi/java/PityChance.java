@@ -3,6 +3,7 @@ package fr.anarchick.anapi.java;
 import javax.annotation.Nonnull;
 import java.util.Random;
 
+@SuppressWarnings("unused")
 public class PityChance {
 
     public enum BOUND {

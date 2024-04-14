@@ -23,6 +23,7 @@ import java.util.*;
  * @version 0.1.4.1 (not fully tested)
  * @author WarzouMc, Anarchick
  */
+@SuppressWarnings("unused")
 public class ItemBuilder {
 
     /**

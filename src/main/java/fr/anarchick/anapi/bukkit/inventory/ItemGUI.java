@@ -5,11 +5,14 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
+@SuppressWarnings("unused")
 public class ItemGUI {
 
     public static final ItemGUI EMPTY = new ItemGUI(null);
 
     private ItemStack item;
+    public boolean ignoreCancelledEvent = true;
+
     public ItemGUI(ItemStack item) {
         this.item = item;
     }

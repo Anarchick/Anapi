@@ -17,6 +17,7 @@ import javax.annotation.Nonnull;
 import java.util.LinkedList;
 import java.util.List;
 
+@SuppressWarnings("unused")
 public class PaperComponentUtils {
 
     public static final MiniMessage DEFAULT_MINIMESSAGE = MiniMessage.miniMessage();
