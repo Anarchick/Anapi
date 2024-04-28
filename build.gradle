@@ -24,6 +24,7 @@ repositories {
     maven { url 'https://libraries.minecraft.net' }
     maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     maven { url = 'https://hub.jeff-media.com/nexus/repository/jeff-media-public/' }
+    maven { url "https://jitpack.io" } // Github repositories
 }
 
 dependencies {
@@ -34,7 +35,8 @@ dependencies {
     compileOnly 'com.mojang:authlib:3.3.39'
     compileOnly 'me.clip:placeholderapi:2.11.5'
     implementation 'com.jeff_media:MorePersistentDataTypes:2.4.0'
-    compileOnly fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'com.github.Anarchick:CanI:main-SNAPSHOT'
+    //compileOnly fileTree(include: ['*.jar'], dir: 'libs')
 }
 
 def targetJavaVersion = 17
