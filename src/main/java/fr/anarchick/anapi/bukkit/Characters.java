@@ -1,35 +1,51 @@
 package fr.anarchick.anapi.bukkit;
 
+import fr.anarchick.anapi.MainBukkit;
 import fr.anarchick.anapi.java.ColorX;
 import fr.anarchick.anapi.java.FileUtils;
 import fr.anarchick.anapi.java.Pair;
+import fr.anarchick.anapi.java.Utils;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.map.MinecraftFont;
-import org.jetbrains.annotations.NotNull;
+import org.bukkit.plugin.Plugin;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.*;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class Characters {
 
+	public static final File FILE = new File(MainBukkit.getInstance().getDataFolder(), "characters.yml");
 	public static final Map<String, Characters> MAPPINGS = new HashMap<>();
+	public static final Pattern PATTERN = Pattern.compile("([A-Fa-f0-9]{4})-([A-Fa-f0-9]{4})");
 
 	protected static final Characters PIXEL_8 = new Characters("A010", "A017");
 	protected static final Characters PIXEL_64 = new Characters("A000", "A007");
 
+	static {
+		if (!FILE.exists()) {
+			MainBukkit.getInstance().saveResource("characters.yml", false);
+		}
+	}
+
 	private final List<String> chars = new ArrayList<>();
-	protected Characters(String unicode) {
+	private final String unicodeStart;
+	private final String unicodeEnd;
+
+	public Characters(String unicode) {
 		this(unicode, unicode);
 	}
-	
-	protected Characters(String unicodeStart, String unicodeEnd) {
+
+	public Characters(String unicodeStart, String unicodeEnd) {
+		this.unicodeStart = unicodeStart;
+		this.unicodeEnd = unicodeEnd;
 		int start = Integer.valueOf(unicodeStart, 16);
 		int end = Integer.valueOf(unicodeEnd, 16);
 		for (int i = start; i <= end; i++) {
@@ -38,8 +54,23 @@ public class Characters {
 	}
 
 	public Characters registerPlaceholder(String... ids) {
+		final YamlConfiguration config = YamlConfiguration.loadConfiguration(FILE);
+
 		for (String id : ids) {
+
+			if (id.contains(".")) {
+				throw new IllegalArgumentException("id cannot contain '.'");
+			}
+
 			MAPPINGS.put(id.toLowerCase(), this);
+			config.set(id, this.unicodeStart+"-"+this.unicodeEnd);
+
+			try {
+				config.save(FILE);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 		}
 		return this;
 	}

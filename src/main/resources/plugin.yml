@@ -5,3 +5,8 @@ api-version: 1.18
 authors: [ Anarchick ]
 softdepend: [Multiverse-Core, PlaceholderAPI]
 description: Anarchick API
+commands:
+  customitem:
+    description: Show all custom items in a GUI
+    usage: /customitem
+    permission: anapi.command.customitem.use

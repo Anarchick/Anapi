@@ -1,9 +1,10 @@
 package fr.anarchick.anapi.bukkit;
 
+import fr.anarchick.anapi.bukkit.softdepend.PlaceHolderAPIUtils;
+import fr.anarchick.anapi.java.NumberUtils;
 import fr.anarchick.anapi.java.Utils;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.block.Block;
@@ -11,15 +12,10 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
-import java.time.Duration;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @SuppressWarnings("unused")
 public class BukkitUtils {
@@ -63,7 +59,7 @@ public class BukkitUtils {
 	}
 	
 	public static Vector createRandomVector(double x, double y, double z) {
-		return new Vector(Utils.getRandomDouble(-x, x), Utils.getRandomDouble(-y, y), Utils.getRandomDouble(-z, z));
+		return new Vector(NumberUtils.getRandomDouble(-x, x), NumberUtils.getRandomDouble(-y, y), NumberUtils.getRandomDouble(-z, z));
 	}
 	
 	public static Double convertToPositiveAngle(double a) {
@@ -86,6 +82,7 @@ public class BukkitUtils {
 		}
 	}
 
+	/*
 	final private static Pattern HEX_PATTERN = Pattern.compile("&?#[a-fA-F0-9]{6}");
     public static String colored(String txt) {
     	final String EMPTY = "";
@@ -99,15 +96,15 @@ public class BukkitUtils {
 	}
 
     public static List<String> colored(List<String> txt) {
-		for (int i = 0; i < txt.size(); i++) {
-			txt.set(i, colored(txt.get(i)));
-		}
+        txt.replaceAll(BukkitUtils::colored);
 		return txt;
 	}
     
     public static List<String> colored(String[] txt) {
     	return colored(new ArrayList<>(List.of(txt)));
     }
+
+	 */
     
     public static List<Block> AABB(Location min, Location max) {
     	List<Block> blocks = new ArrayList<>();
@@ -141,14 +138,20 @@ public class BukkitUtils {
     	}
     	return blocks;
     }
-    
+
+	@MiniMessage
     public static String gradientString(String message, java.awt.Color in, java.awt.Color out) {
     	StringBuilder sb = new StringBuilder();
     	double percent = 0d;
     	double x = 100d/message.length();
     	for (char c : message.toCharArray()) {
-    		sb.append(ChatColor.of(Utils.gradient(in, out, percent)));
-    		sb.append(c);
+			java.awt.Color color = Utils.gradient(in, out, percent);
+			int r = color.getRed();
+			int g = color.getGreen();
+			int b = color.getBlue();
+			String hex = String.format("%02x%02x%02x", r, g, b);
+    		sb.append(String.format("<#%s>", hex));
+			sb.append(c);
     		percent += x;
     	}
     	return sb.toString();
@@ -181,17 +184,36 @@ public class BukkitUtils {
 		if (level <= 31) return 2.5*level*level -40.5*level +360.0;
 		return 4.5*level*level -162.5*level +2220.0;
 	}
-    
+
+	/*
 	public static void sendColoredMessage(Player player, String message) {
 		player.sendMessage(colored(message));
+	}
+
+	 */
+
+	/**
+	 * Use MiniMessage API and PlaceHolderAPI if applicable
+	 * @param sender the receiver
+	 * @param miniMessage the mini message as string
+	 */
+	@MiniMessage
+	public static void sendMessage(CommandSender sender, String miniMessage) {
+		sendMessage(sender, miniMessage, true);
 	}
 
 	/**
 	 * Use MiniMessage API
 	 * @param sender the receiver
 	 * @param miniMessage the mini message as string
+	 * @param usePlaceHolderAPI if true, the message will be parsed by PlaceHolderAPI (if the plugin is loaded)
 	 */
-	public static void sendMessage(CommandSender sender, String miniMessage) {
+	@MiniMessage
+	public static void sendMessage(CommandSender sender, String miniMessage, boolean usePlaceHolderAPI) {
+		if (usePlaceHolderAPI) {
+			miniMessage = PlaceHolderAPIUtils.setPlaceholders(sender, miniMessage);
+		}
+
 		Audience.audience(sender).sendMessage(PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage));
 	}
 
@@ -204,47 +226,6 @@ public class BukkitUtils {
 		Audience.audience(sender).sendMessage(miniMessage);
 	}
 
-	/**
-	 * Does not send a message to console
-	 * @param miniMessage the mini message as string
-	 */
-	public static void broadcastMessage(@Nonnull String miniMessage) {
-		broadcastMessage(Bukkit.getOnlinePlayers(), miniMessage);
-	}
-
-	/**
-	 * Does not send a message to console
-	 * @param players receivers
-	 * @param miniMessage the mini message as string
-	 */
-	public static void broadcastMessage(@Nonnull Collection<? extends Player> players, @Nonnull String miniMessage) {
-		Component component = PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage);
-		players.forEach(player -> player.sendMessage(component));
-	}
-
-
-
-	public static void sendActionBar(Player player, String miniMessage) {
-		player.sendActionBar(PaperComponentUtils.getMiniMessageTextComponent(miniMessage));
-	}
-
-	public static void sendTitle(@Nonnull Player player, @Nonnull String title, @Nonnull String subtitle, int fadeIn, int stay, int fadeOut) {
-		sendTitle(List.of(player), title, subtitle, fadeIn, stay, fadeOut);
-	}
-	public static void sendTitle(@Nonnull List<Player> players, @Nonnull String title, @Nonnull String subtitle, int fadeIn, int stay, int fadeOut) {
-		if (players.isEmpty()) return;
-		Component componentTitle = PaperComponentUtils.getMiniMessageTextComponent(title);
-		Component componentSubtitle = PaperComponentUtils.getMiniMessageTextComponent(subtitle);
-		Duration in = Duration.ofMillis(fadeIn * 50L);
-		Duration st = Duration.ofMillis(stay *50L);
-		Duration out = Duration.ofMillis(fadeOut *50L);
-		Audience.audience(players).showTitle(Title.title(componentTitle, componentSubtitle, Title.Times.times(in, st, out)));
-	}
-
-	public static void kick(Player player, String miniMessage) {
-		player.kick(PaperComponentUtils.getMiniMessageTextComponent(miniMessage));
-	}
-
 	public static List<Location> sortedNearestLocations(Location origin, List<Location> locs) {
 		LinkedList<Location> sorted = new LinkedList<>(locs);
 		sorted.sort((o1, o2) -> {
@@ -253,6 +234,20 @@ public class BukkitUtils {
 			return d1.compareTo(d2);
 		});
 		return sorted;
+	}
+
+	/**
+	 * Return the material from is name without sending exceptions.
+	 * @param name can be in any case and can contain spaces
+	 * @return the material or null
+	 */
+	@Nullable
+	public static Material getMaterial(String name) {
+		try {
+			return Material.valueOf(name.toUpperCase().replace(" ", "_"));
+		} catch (Exception ignored) {
+			return null;
+		}
 	}
 
 }

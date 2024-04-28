@@ -27,8 +27,6 @@ import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
 /**
- * TODO this should actually only be an Iterator
- * 
  * @author Peter Güttinger
  */
 @SuppressWarnings("unused")

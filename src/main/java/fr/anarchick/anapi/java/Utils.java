@@ -6,13 +6,10 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nullable;
 import java.awt.*;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Collections;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.DoubleStream;
 
 @SuppressWarnings("unused")
 public class Utils {
@@ -47,49 +44,7 @@ public class Utils {
 		return list.get(index);
 	}
 
-	/**
-	 * Use a static Random instead of using new Random().nextDouble(min, max)
-	 * @param min
-	 * @param max
-	 * @return
-	 */
-    public static Double getRandomDouble(double min, double max) {
-        return RANDOM.nextDouble(Math.min(min, max), Math.max(min, max) + 1);
-    }
-
-	public static int getProbability(List<Double> probs) {
-		double[] probabilities = new double[probs.size()];
-		for (int i = 0; i < probs.size(); i++) {
-			probabilities[i] = probs.get(i).doubleValue();
-		}
-		return getProbability(probabilities);
-	}
-
-	/**
-	 * The sum of probabilities can exceed 100% without error
-	 * @param probabilities
-	 * @return the index of the probability distribution
-	 */
-	public static int getProbability(double... probabilities) {
-		double sum = DoubleStream.of(probabilities).sum();
-		double r = getRandomDouble(0, 100);
-		double s = 0;
-		int prob = 0;
-		for (double probability : probabilities) {
-			s += ( 100.0 * probability / sum );
-			if (r > s) prob++;
-		}
-		return prob;
-	}
-    
-    /**
-     * 
-     * @param chance [0;100]
-     */
-    public static boolean chance(double chance) {
-        return (RANDOM.nextDouble(0, 100) <= chance);
-    }
-
+	@SafeVarargs
 	public static <E> List<E> newArrayList(boolean shuffle, E... elements) {
 		List<E> list = Lists.newArrayList(elements);
 		if (shuffle) Collections.shuffle(list);
@@ -107,16 +62,6 @@ public class Utils {
     	return new Color((int) r, (int) g, (int) b);
     }
     
-    public static <T extends Comparable<T>> T clamp(T val, T min, T max) {
-	    if (val.compareTo(min) < 0) return min;
-	    else if (val.compareTo(max) > 0) return max;
-	    else return val;
-	}
-
-	public static <T extends Comparable<T>> boolean isBetween(T val, T min, T max) {
-		return !(val.compareTo(min) < 0 || val.compareTo(max) > 0);
-	}
-    
     public static String phaseColor(String hex, float phase) {
     	Color color = Color.decode(hex);
     	float[] hsb = Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), null);
@@ -125,17 +70,7 @@ public class Utils {
     	return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
-    public static int[] getIntegersBetween(int start, int end) {
-    	final int min = Math.min(start, end);
-    	final int size = Math.abs(start - end) + 1;
-    	int[] ints = new int[size];
-    	for (int i = 0; i < size; i++) {
-    		ints[i] = min+i;
-    	}
-    	return ints;
-    }
-
-	private final static Pattern UUID_REGEX_PATTERN =
+	public final static Pattern UUID_REGEX_PATTERN =
 			Pattern.compile("^[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?$");
 
 	public static boolean isValidUUID(String str) {
@@ -145,25 +80,7 @@ public class Utils {
 		return UUID_REGEX_PATTERN.matcher(str).matches();
 	}
 
-	/** Linear interpolation from range [a;b] to [c;d]
-	 *
-	 * @since 1.0
-	 *
-	 * @param x between [a;b]
-	 * @param a
-	 * @param b
-	 * @param c
-	 * @param d
-	 * @return Double between [c;d]
-	 */
-	public static Double linear(double x, double a, double b, double c, double d) {
-		if (a >= b) return 0D;
-		if (x <= a) return c;
-		if (x >= b) return d;
-		return c + (x - a) * (d - c) / (b - a);
-	}
-
-	private static final Pattern PATTERN_UNICODE = Pattern.compile("\\\\u([0-9A-Fa-f]{4})");
+	public static final Pattern PATTERN_UNICODE = Pattern.compile("\\\\u([0-9A-Fa-f]{4})");
 
 	/**
 	 * Replace all unicode \uABCD with it's corresponding character.
@@ -172,7 +89,7 @@ public class Utils {
 	 */
 	public static String replaceUnicode(@NotNull String input) {
 		final Matcher matcher = PATTERN_UNICODE.matcher(input);
-		final StringBuffer result = new StringBuffer();
+		final StringBuilder result = new StringBuilder();
 
 		while (matcher.find()) {
 			int code = Integer.parseInt(matcher.group(1), 16);
@@ -183,4 +100,25 @@ public class Utils {
 		return result.toString();
 	}
 
+	/**
+	 * Extract regex groups from the given string. Only apply to the first occurrence !
+	 * @param pattern the pattern
+	 * @param text the string
+	 * @return a map of regex groups or empty map if the pattern does not match.
+	 */
+	@NotNull
+	public static Map<Integer, String> extractGroups(final @NotNull Pattern pattern, final String text) {
+		final Map<Integer, String> groups = new HashMap<>();
+		final Matcher matcher = pattern.matcher(text);
+
+		if (matcher.find()) {
+
+			for (int i = 1; i <= matcher.groupCount(); i++) {
+				groups.put(i, matcher.group(i));
+			}
+
+		}
+
+		return groups;
+	}
 }

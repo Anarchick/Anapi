@@ -15,20 +15,6 @@ import java.util.List;
 @SuppressWarnings("unused")
 public class PlaceHolderAPIUtils {
 
-    public static String setPlaceholders(@Nullable CommandSender sender, String message) {
-        if ( !(sender instanceof OfflinePlayer) ) {
-            sender = null;
-        }
-        return setPlaceholders(sender, message);
-    }
-
-    public static List<String> setPlaceholders(@Nullable CommandSender sender, List<String> messages) {
-        if ( !(sender instanceof OfflinePlayer) ) {
-            sender = null;
-        }
-        return setPlaceholders(sender, messages);
-    }
-
     public static String setPlaceholders(@Nullable OfflinePlayer player, String message) {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             message = PlaceholderAPI.setPlaceholders(player, message);
@@ -39,6 +25,28 @@ public class PlaceHolderAPIUtils {
     public static List<String> setPlaceholders(@Nullable OfflinePlayer player, List<String> messages) {
         if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             messages = PlaceholderAPI.setPlaceholders(player, messages);
+        }
+        return messages;
+    }
+
+    public static String setPlaceholders(@Nullable CommandSender sender, String message) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (sender instanceof OfflinePlayer player) {
+                message = PlaceholderAPI.setPlaceholders(player, message);
+            } else {
+                message = PlaceholderAPI.setPlaceholders(null, message);
+            }
+        }
+        return message;
+    }
+
+    public static List<String> setPlaceholders(@Nullable CommandSender sender, List<String> messages) {
+        if (Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI")) {
+            if (sender instanceof OfflinePlayer player) {
+                messages = PlaceholderAPI.setPlaceholders(player, messages);
+            } else {
+                messages = PlaceholderAPI.setPlaceholders(null, messages);
+            }
         }
         return messages;
     }

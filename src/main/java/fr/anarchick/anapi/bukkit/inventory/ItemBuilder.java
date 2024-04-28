@@ -1,20 +1,22 @@
 package fr.anarchick.anapi.bukkit.inventory;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import fr.anarchick.anapi.bukkit.MiniMessage;
 import fr.anarchick.anapi.bukkit.PaperComponentUtils;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
+import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.*;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.*;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
-
-import com.mojang.authlib.GameProfile;
-import com.mojang.authlib.properties.Property;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -31,6 +33,7 @@ public class ItemBuilder {
      */
     private ItemStack itemStack;
     private ItemMeta itemMeta;
+    private List<String> lore = new ArrayList<>();
 
     /**
      * init ItemBuilder without argument
@@ -68,6 +71,13 @@ public class ItemBuilder {
     public ItemBuilder(ItemStack itemStack){
         this.itemStack = itemStack;
         this.itemMeta = itemStack.getItemMeta();
+        @Nullable List<Component> components = itemStack.lore();
+
+        if (components != null) {
+            for (Component component : components) {
+                lore.add(PaperComponentUtils.DEFAULT_MINIMESSAGE.serialize(component));
+            }
+        }
     }
 
     /**
@@ -98,6 +108,24 @@ public class ItemBuilder {
     public ItemBuilder setAmount(int amount){
         this.itemStack.setAmount(amount);
         return this;
+    }
+
+    @NotNull
+    public PersistentDataContainer getPersistentDataContainer() {
+        return this.itemMeta.getPersistentDataContainer();
+    }
+
+    public <T, Z> ItemBuilder setPersistentDataValue(NamespacedKey key, PersistentDataType<T, Z> type, Z value) {
+        getPersistentDataContainer().set(key, type, value);
+        return this;
+    }
+
+    public <T, Z> T getPersistentDataValue(NamespacedKey key, PersistentDataType<T, Z> type) {
+        return (T) getPersistentDataContainer().get(key, type);
+    }
+
+    public <T, Z> T getPersistentDataValue(NamespacedKey key, PersistentDataType<T, Z> type, Z defaultValue) {
+        return (T) getPersistentDataContainer().getOrDefault(key, type, defaultValue);
     }
     
     /**
@@ -141,34 +169,58 @@ public class ItemBuilder {
 
     /**
      * set the display name of the item
-     * @param miniMessage
+     * @param name
      * @return
      */
     @SuppressWarnings("deprecation")
-	public ItemBuilder setName(String miniMessage){
-        itemMeta.displayName(toMiniMessage(miniMessage));
+	public ItemBuilder setName(@Nullable @MiniMessage String name) {
+        if (name == null) {
+            itemMeta.displayName(null);
+        } else {
+            itemMeta.displayName(toMiniMessage(name));
+        }
         return this;
     }
 
     /**
-     * Add lore from String list
+     * Set lore from String list
      * @param lores
      * @return
      */
-    
+    @SuppressWarnings("deprecation")
+    public ItemBuilder setLore(@MiniMessage List<String> lores){
+        lore = new ArrayList<>(lores);
+        return this;
+    }
+
+    /**
+     * Set lore from String...
+     * @param lores
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    public ItemBuilder setLore(@MiniMessage String... lores){
+        lore = new ArrayList<>(Arrays.asList(lores));
+        return this;
+    }
+
+    /**
+     * Add to current lore from String list
+     * @param lores
+     * @return
+     */
 	@SuppressWarnings("deprecation")
-	public ItemBuilder addLore(List<String> lores){
-        List<Component> loresComponent = lores.stream().map(lore -> PaperComponentUtils.getMiniMessageTextComponent(lore)).toList();
-        itemMeta.lore(loresComponent);
+	public ItemBuilder addLore(@MiniMessage List<String> lores){
+        getLore().addAll(lores);
         return this;
     }
 
     /**
-     * Add lore from String...
+     * Add to current lore from String...
      * @param lores
      * @return
      */
-    public ItemBuilder addLore(String... lores){
+    public ItemBuilder addLore(@MiniMessage String... lores){
         addLore(Arrays.asList(lores));
         return this;
     }
@@ -502,7 +554,10 @@ public class ItemBuilder {
      * @return
      */
     public ItemStack build() {
-    	this.itemStack.setItemMeta(this.itemMeta);
+        List<Component> loresComponent = getLore().stream().map(lore -> toMiniMessage(lore)
+                .decoration(TextDecoration.ITALIC, false)).toList();
+        this.itemStack.setItemMeta(this.itemMeta);
+        this.itemStack.lore(loresComponent);
         return itemStack;
     }
 
@@ -653,9 +708,10 @@ public class ItemBuilder {
      * get lore
      * @return
      */
+    @NotNull
     @SuppressWarnings("deprecation")
-	public List<String> getLore(){
-        return itemStack.hasItemMeta() && itemMeta.hasLore() ? itemMeta.getLore() : null;
+	public List<String> getLore() {
+        return lore;
     }
 
     /**
@@ -684,7 +740,7 @@ public class ItemBuilder {
     }
 
     protected Component toMiniMessage(String miniMessage) {
-        return PaperComponentUtils.getMiniMessageTextComponent(miniMessage);
+        return PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(miniMessage);
     }
 
 }

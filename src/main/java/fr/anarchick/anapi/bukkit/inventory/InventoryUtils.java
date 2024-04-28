@@ -1,6 +1,7 @@
 package fr.anarchick.anapi.bukkit.inventory;
 
-import fr.anarchick.anapi.bukkit.BukkitUtils;
+import fr.anarchick.anapi.bukkit.MiniMessage;
+import fr.anarchick.anapi.bukkit.PaperComponentUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -8,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -21,8 +23,12 @@ import java.util.Set;
 @SuppressWarnings("unused")
 public class InventoryUtils {
 
-    public static Inventory createInventory(InventoryHolder owner, int size, String name) {
-        return Bukkit.createInventory(owner, size, BukkitUtils.colored(name));
+    public static Inventory createInventory(InventoryHolder owner, int size, @MiniMessage String name) {
+        return Bukkit.createInventory(owner, size, PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(name));
+    }
+
+    public static Inventory createInventory(InventoryHolder owner, InventoryType type, @MiniMessage String name) {
+        return Bukkit.createInventory(owner, type, PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(name));
     }
 
     public static Integer getAmount(@Nonnull Inventory inv, @Nonnull Material material) {

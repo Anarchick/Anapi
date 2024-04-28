@@ -216,7 +216,7 @@ public class ColorX {
 
     public ColorX mix(float ratio, ColorX color) {
         if (ratio == 0) return clone();
-        ratio = Utils.clamp(ratio, 0f, 1f);
+        ratio = NumberUtils.clamp(ratio, 0f, 1f);
         int red = r + (int) ((color.r - r) * ratio);
         int green = g + (int) ((color.g - g) * ratio);
         int blue = b + (int) ((color.b - b) * ratio);
