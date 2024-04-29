@@ -2,6 +2,11 @@ package fr.anarchick.anapi.bukkit.inventory;
 
 import fr.anarchick.anapi.bukkit.MiniMessage;
 import fr.anarchick.anapi.bukkit.PaperComponentUtils;
+import fr.anarchick.cani.api.inventory.CanISetItemEvent;
+import fr.anarchick.cani.api.inventory.slot.InventorySlot;
+import fr.anarchick.cani.api.inventory.slot.PlayerEquipmentSlot;
+import fr.anarchick.cani.api.inventory.slot.Slot;
+import fr.anarchick.cani.internal.CanI;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -10,15 +15,11 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.inventory.InventoryType;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nonnull;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @SuppressWarnings("unused")
 public class InventoryUtils {
@@ -31,6 +32,9 @@ public class InventoryUtils {
         return Bukkit.createInventory(owner, type, PaperComponentUtils.DEFAULT_MINIMESSAGE.deserialize(name));
     }
 
+    /**
+     * Also check the extra content
+     */
     public static Integer getAmount(@Nonnull Inventory inv, @Nonnull Material material) {
         int amount = 0;
         for (ItemStack item : inv.all(material).values()) {
@@ -39,6 +43,9 @@ public class InventoryUtils {
         return amount;
     }
 
+    /**
+     * Also check the extra content
+     */
     public static Integer getAmount(@Nonnull Inventory inv, @Nonnull ItemStack itemStack) {
         int amount = 0;
         for (ItemStack item : inv.all(itemStack).values()) {
@@ -68,11 +75,11 @@ public class InventoryUtils {
     }
 
     /**
-     * Transfert some items from an inventory into an other if it contains similar items's types
+     * Transfer some items from an inventory into another if it contains similar item's types
      * @param from the inventory where we take items
      * @param to the inventory where we drop them
      */
-    public static void transfert(@Nonnull Inventory from, @Nonnull Inventory to) {
+    public static void transfer(@Nonnull Inventory from, @Nonnull Inventory to) {
         // slots of fromInventory similar with toInventory
         Set<Integer> slots = new HashSet<>();
         for (ItemStack item : to.getContents()) {
@@ -98,6 +105,77 @@ public class InventoryUtils {
             }
             from.setItem(slot, replace);
         }
+    }
+
+    /**
+     * Get all the indexes of the specified item in the inventory
+     * different from {@link Inventory#all(ItemStack)} because it does not need the exact amount of items
+     * priority to item in main hand, then offhand, then armor, and finally inventory content
+     */
+    public static LinkedList<Slot> all(final @NotNull Inventory inv, final @NotNull ItemStack item) {
+        // TreeMap to sort the indexes
+        TreeMap<Integer, Slot> map = new TreeMap<>();
+        int i = 0;
+
+        for (ItemStack itemstack : inv.getStorageContents()) {
+            if (itemstack != null && itemstack.isSimilar(item)) {
+                map.put(i, new InventorySlot(inv, i));
+            }
+            i++;
+        }
+
+        if (inv instanceof PlayerInventory playerInv) {
+            for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+                if (playerInv.getItem(equipmentSlot).isSimilar(item)) {
+                    map.put(-100 + equipmentSlot.ordinal(), new PlayerEquipmentSlot(playerInv, equipmentSlot));
+                }
+            }
+        }
+
+        return new LinkedList<>(map.values());
+    }
+
+    /**
+     * Consume the amount of the specified item from the inventory
+     * priority to item in main hand, then offhand, then armor, and finally inventory content
+     *
+     * @return true if the item has been consumed
+     */
+    @CanI
+    public static boolean consume(final @NotNull Inventory inv, final @NotNull ItemStack item, int amount) {
+        LinkedList<Slot> consumeList = new LinkedList<>();
+        int amountLeft = amount;
+
+        for (Slot slot : all(inv, item)) {
+            if (amount <= 0) {
+                break;
+            } else if (new CanISetItemEvent(null, inv, slot, item, true).ask().isAccepted()) {
+                consumeList.add(slot);
+                amount -= item.getAmount();
+            }
+        }
+
+        if (amount > 0) {
+            return false;
+        }
+
+        for (Slot slot : consumeList) {
+            if (amountLeft <= 0) {
+                break;
+            } else {
+                ItemStack itemStack = slot.getItem();
+                if (itemStack.getAmount() >= amountLeft) {
+                    itemStack.setAmount(itemStack.getAmount() - amountLeft);
+                    slot.setItem(itemStack);
+                    break;
+                } else {
+                    amountLeft -= itemStack.getAmount();
+                    slot.setItem(null);
+                }
+            }
+        }
+
+        return true;
     }
 
     public static class InventoryMoveItemsEvent extends Event implements Cancellable {
